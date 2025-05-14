@@ -1,12 +1,19 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+from google.oauth2 import service_account
+from google.cloud import bigquery
 from src.kpi import get_kpi_data
 
 st.set_page_config(page_title="📊 Bot Amazon - KPI Dashboard", layout="wide")
 st.title("📊 Tableau de bord du Bot Amazon")
 
-# Récupérer les données depuis BigQuery
+# Authentification sécurisée via les secrets Streamlit
+credentials_info = st.secrets["gcp"]
+credentials = service_account.Credentials.from_service_account_info(credentials_info)
+
+
+# Récupérer les données depuis BigQuery (en supposant que get_kpi_data utilise les credentials par défaut)
 df = get_kpi_data()
 
 # Vérifier les données
