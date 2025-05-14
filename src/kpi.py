@@ -1,8 +1,12 @@
 from google.cloud import bigquery
+from google.oauth2 import service_account
 import pandas as pd
+import streamlit as st
 
-
-client = bigquery.Client.from_service_account_json("assets/key.json")  
+# Création du client BigQuery à partir des secrets Streamlit
+credentials_info = st.secrets["gcp"]
+credentials = service_account.Credentials.from_service_account_info(credentials_info)
+client = bigquery.Client(credentials=credentials, project=credentials_info["project_id"])
 
 def get_kpi_data():
     QUERY = """
@@ -15,5 +19,5 @@ def get_kpi_data():
         df = client.query(QUERY).to_dataframe()
         return df
     except Exception as e:
-        print("Erreur BigQuery:", e)
+        st.error(f"Erreur BigQuery : {e}")
         return pd.DataFrame()
